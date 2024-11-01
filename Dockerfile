@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1
+# syntax=docker/dockerfile:1
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t my-app .
@@ -16,11 +16,18 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
+# Install Node.js and yarn
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install --global yarn && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
 # Set production environment
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+    BUNDLE_WITHOUT="development" \
+    RAILS_MASTER_KEY="89bbec14e252d23d1d66c5dd31b36e7b"
 
 # Throw-away build stage to reduce size of final image
 FROM base AS build
@@ -42,8 +49,11 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN MAGLEV_ADMIN_USERNAME=dummy VITE_RUBY_SKIP_COMPATIBILITY_CHECK=true SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+# Install JavaScript dependencies
+RUN yarn install
+
+# Precompile assets for production
+RUN MAGLEV_ADMIN_USERNAME=dummy MAGLEV_ADMIN_PASSWORD=dummy VITE_RUBY_SKIP_COMPATIBILITY_CHECK=true SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 # Final stage for app image
 FROM base
