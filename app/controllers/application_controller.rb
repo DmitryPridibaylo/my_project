@@ -4,8 +4,8 @@ class ApplicationController < ActionController::Base
   protected
   def authenticate_maglev_editor(site)
     http_basic_authenticate_or_request_with(
-      name: ENV.fetch('MAGLEV_EDITOR_USERNAME'),
-      password: ENV.fetch('MAGLEV_EDITOR_PASSWORD'),
+      name: "editor",
+      password: "editor",
       )
   end
 end

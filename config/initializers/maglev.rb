@@ -44,7 +44,8 @@ Maglev.configure do |config|
 
   # Editor UI authentication (https://docs.maglev.dev/guides/setup-authentication)
   # config.is_authenticated = :editor_allowed? # name of any protected method from your Rails application controller
-  config.is_authenticated = ->(site) {true}
+  config.is_authenticated = :authenticate_maglev_editor
+
 
   # Admin UI authentication (https://docs.maglev.dev/guides/setup-authentication)
   config.admin_username = Rails.env.production? ? "admin": nil
