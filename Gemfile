@@ -17,7 +17,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
-gem 'maglevcms', '~> 1.7.3'
+gem 'maglevcms', '~> 1.8.0'
 gem 'maglevcms-hyperui-kit', '~> 1.2.0'
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
